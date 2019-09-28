@@ -2,30 +2,26 @@ from collections import deque
 
 
 n, q = map(int, input().split())
-a = []
-b = []
-p = []
-x = []
-score = [0 for i in range(n)]
-tree = {i:[] for i in range(1, n + 1)}
+tree = [[] for _ in range(n + 1)]
+score = [0 for _ in range(n + 1)]
 
-def dfs(p, x):
-    for i in tree[p]:
-        if i > p:
-            score[i - 1] += x
-        score[p - 1] += x
+dq = deque()
+dq.append((1, 0))
+
 for i in range(n - 1):
-    i_a, i_b = map(int, input().split())
-    a.append(i_a)
-    b.append(i_b)
-    tree[i_a].append(i_b)
-    tree[i_b].append(i_a)
+    a, b = map(int, input().split())
+    tree[a].append(b)
+    tree[b].append(a)
 
 for i in range(q):
-    i_p, i_x = map(int, input().split())
-    dfs(i_p, i_x)
-    print(i, end = " : ")
-    print(score)
+    p, x = map(int, input().split())
+    score[p] += x
 
-print(score)
+while(dq):
+    k = dq.popleft()
+    score[k[0]] += score[k[1]]
+    for i in tree[k[0]]:
+        if not i == k[1]:
+            dq.append((i, k[0]))
 
+print(*score[1:])
